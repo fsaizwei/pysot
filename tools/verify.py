@@ -15,7 +15,7 @@ from pysot.core.config import cfg
 from pysot.models.model_builder import ModelBuilder
 from pysot.tracker.tracker_builder import build_tracker
 
-torch.set_num_threads(1)
+torch.set_num_threads(2)
 
 parser = argparse.ArgumentParser(description='tracking demo')
 parser.add_argument('--config', type=str, help='config file')
@@ -70,10 +70,10 @@ def main():
         map_location=lambda storage, loc: storage.cpu()))
     model.eval().to(device)
 
-        # build tracker
-    tracker = build_tracker(model)
+    #model.save_script("/home/fsai04/Downloads/pysot_model")
 
-    model.save_script("/home/fsai04/Downloads/pysot_model")
+    # build tracker
+    tracker = build_tracker(model)
 
     first_frame = True
     if args.video_name:
@@ -84,12 +84,14 @@ def main():
     for frame in get_frames(args.video_name):
         if first_frame:
             try:
-                init_rect = cv2.selectROI(video_name, frame, False, False)
+                #init_rect = cv2.selectROI(video_name, frame, False, False)
+                init_rect = [1554, 1142, 120, 110]
             except:
                 exit()
             tracker.init(frame, init_rect)
             first_frame = False
-        else:
+
+#        else:
             outputs = tracker.track(frame)
             if 'polygon' in outputs:
                 polygon = np.array(outputs['polygon']).astype(np.int32)
