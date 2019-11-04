@@ -5,6 +5,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import os
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -113,3 +115,28 @@ class ModelBuilder(nn.Module):
             outputs['total_loss'] += cfg.TRAIN.MASK_WEIGHT * mask_loss
             outputs['mask_loss'] = mask_loss
         return outputs
+
+    def save_script(self, save_path):
+        back_bone_script = torch.jit.script(self.backbone)
+        back_bone_script.save(os.path.join(save_path, "back_bone.pt"))
+        print("Save backbone as {}".format(os.path.join(save_path, "back_bone.pt")))
+
+        if self.neck:
+            neck_script = torch.jit.script(self.neck)
+            neck_script.save(os.path.join(save_path, "neck.pt"))
+            print("Save neckscript as {}".format(os.path.join(save_path, "neck.pt")))
+
+        if self.rpn_head:
+            rpn_head_script = torch.jit.script(self.rpn_head)
+            rpn_head_script.save(os.path.join(save_path, "rpn_head.pt"))
+            print("Save rpn_head_script as {}".format(os.path.join(save_path, "rpn_head.pt")))
+
+        if self.mask_head:
+            mask_head_script = torch.jit.script(self.mask_head)
+            mask_head_script.save(os.path.join(save_path, "mask_head.pt"))
+            print("Save mask_head_script as {}".format(os.path.join(save_path, "mask_head.pt")))
+
+            if self.refine_head:
+                refine_head_script = torch.jit.script(self.refine_head)
+                refine_head_script.save(os.path.join(save_path, "refine_head.pt"))
+                print("Save refine_head_script as {}".format(os.path.join(save_path, "refine_head.pt")))
