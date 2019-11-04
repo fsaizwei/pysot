@@ -42,11 +42,13 @@ class AdjustAllLayer(nn.Module):
                                             center_size))
 
     def forward(self, features):
-        if self.num == 1:
-            return self.downsample(features)
-        else:
-            out = []
-            for i in range(self.num):
-                adj_layer = getattr(self, 'downsample'+str(i+2))
-                out.append(adj_layer(features[i]))
-            return out
+        return self.downsample(features)
+        #if self.num == 1:
+        #    return self.downsample(features)
+        #else:
+        #    out = []
+        #    for i in range(self.num):
+        #        layer_name = 'downsample'+str(i+2)
+        #        adj_layer = getattr(self, layer_name)
+        #        out.append(adj_layer(features[i]))
+        #    return out
