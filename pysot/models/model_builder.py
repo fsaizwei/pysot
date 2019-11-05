@@ -56,7 +56,6 @@ class ModelBuilder(nn.Module):
             zf = self.neck(zf)
         self.zf = zf
 
-    @torch.jit.script_method
     def track(self, x):
         xf_local = self.backbone(x)
         if cfg.MASK.MASK:
@@ -74,7 +73,7 @@ class ModelBuilder(nn.Module):
                }
 
     def mask_refine(self, pos):
-        return self.refine_head(self.xf, self.mask_corr_feature, pos)
+        return self.refine_head(self.xf[0], self.xf[1], self.xf[2], self.mask_corr_feature, pos)
 
     def log_softmax(self, cls):
         b, a2, h, w = cls.size()
