@@ -39,6 +39,7 @@ class ModelBuilder(nn.Module):
         self.rpn_head = get_rpn_head(cfg.RPN.TYPE,
                                      **cfg.RPN.KWARGS)
 
+        self.xf = []
         # build mask head
         if cfg.MASK.MASK:
             self.mask_head = get_mask_head(cfg.MASK.TYPE,
