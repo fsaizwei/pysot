@@ -78,10 +78,6 @@ class SiamMaskTracker(SiamRPNTracker):
                                     cfg.TRACK.INSTANCE_SIZE,
                                     s_x,
                                     self.channel_average)
-        crop_box = [self.center_pos[0] - s_x / 2,
-                    self.center_pos[1] - s_x / 2,
-                    s_x,
-                    s_x]
 
         outputs = self.model.track(x_crop)
         score = self._convert_score(outputs['cls'])
@@ -139,6 +135,11 @@ class SiamMaskTracker(SiamRPNTracker):
         mask = self.model.mask_refine((delta_y, delta_x)).sigmoid().squeeze()
         out_size = cfg.TRACK.MASK_OUTPUT_SIZE
         mask = mask.view(out_size, out_size).cpu().data.numpy()
+
+        crop_box = [self.center_pos[0] - s_x / 2,
+                    self.center_pos[1] - s_x / 2,
+                    s_x,
+                    s_x]
 
         s = crop_box[2] / cfg.TRACK.INSTANCE_SIZE
         base_size = cfg.TRACK.BASE_SIZE
