@@ -70,7 +70,7 @@ def main():
         map_location=lambda storage, loc: storage.cpu()))
     model.eval().to(device)
 
-        # build tracker
+    # build tracker
     tracker = build_tracker(model)
 
     model.save_script("/home/fsai04/Downloads/pysot_model")

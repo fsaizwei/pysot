@@ -17,7 +17,12 @@ from pysot.models.head import get_rpn_head, get_mask_head, get_refine_head
 from pysot.models.neck import get_neck
 
 
+from typing import List
+
 class ModelBuilder(nn.Module):
+    #xf: torch.jit.Final[Tensor]
+    __annotations__ = {'xf': List[torch.Tensor]}
+
     def __init__(self):
         super(ModelBuilder, self).__init__()
 
@@ -50,16 +55,17 @@ class ModelBuilder(nn.Module):
             zf = self.neck(zf)
         self.zf = zf
 
+    @torch.jit.script_method
     def track(self, x):
-        xf = self.backbone(x)
+        xf_local = self.backbone(x)
         if cfg.MASK.MASK:
-            self.xf = xf[:-1]
-            xf = xf[-1]
+            self.xf = xf_local[:-1]
+            xf = xf_local[-1]
         if cfg.ADJUST.ADJUST:
-            xf = self.neck(xf)
-        cls, loc = self.rpn_head(self.zf, xf)
+            xf_n = self.neck(xf)
+        cls, loc = self.rpn_head(self.zf, xf_n)
         if cfg.MASK.MASK:
-            mask, self.mask_corr_feature = self.mask_head(self.zf, xf)
+            mask, self.mask_corr_feature = self.mask_head(self.zf, xf_n)
         return {
                 'cls': cls,
                 'loc': loc,

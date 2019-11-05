@@ -72,10 +72,10 @@ class Refine(nn.Module):
         self.post1 = nn.Conv2d(16, 4, 3, padding=1)
         self.post2 = nn.Conv2d(4, 1, 3, padding=1)
 
-    def forward(self, f, corr_feature, pos):
-        p0 = F.pad(f[0], [16, 16, 16, 16])[:, :, 4*pos[0]:4*pos[0]+61, 4*pos[1]:4*pos[1]+61]
-        p1 = F.pad(f[1], [8, 8, 8, 8])[:, :, 2*pos[0]:2*pos[0]+31, 2*pos[1]:2*pos[1]+31]
-        p2 = F.pad(f[2], [4, 4, 4, 4])[:, :, pos[0]:pos[0]+15, pos[1]:pos[1]+15]
+    def forward(self, f_list, corr_feature, pos):
+        p0 = F.pad(f_list[0], [16, 16, 16, 16])[:, :, 4*pos[0]:4*pos[0]+61, 4*pos[1]:4*pos[1]+61]
+        p1 = F.pad(f_list[1], [8, 8, 8, 8])[:, :, 2*pos[0]:2*pos[0]+31, 2*pos[1]:2*pos[1]+31]
+        p2 = F.pad(f_list[2], [4, 4, 4, 4])[:, :, pos[0]:pos[0]+15, pos[1]:pos[1]+15]
 
         p3 = corr_feature[:, :, pos[0], pos[1]].view(-1, 256, 1, 1)
 

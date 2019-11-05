@@ -91,7 +91,7 @@ def main():
             tracker.init(frame, init_rect)
             first_frame = False
 
-#        else:
+        #else:
             outputs = tracker.track(frame)
             if 'polygon' in outputs:
                 polygon = np.array(outputs['polygon']).astype(np.int32)
